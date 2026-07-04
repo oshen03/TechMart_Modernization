@@ -116,7 +116,7 @@ public class PerformanceMonitor {
             Map<String, Object> row = new ConcurrentHashMap<>();
             row.put("key", key);
             row.put("invocations", count != null ? count.get() : 0L);
-            row.put("avgLatencyMs", String.format("%.2f", avg));
+            row.put("avgLatencyMs", avg);
             summary.add(row);
         }
         return summary;
