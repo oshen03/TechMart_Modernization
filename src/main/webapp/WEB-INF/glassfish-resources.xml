@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resources PUBLIC
+    "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN"
+    "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+
+<!--
+    GlassFish Resource Definitions
+    ================================
+    Place this file in WEB-INF/ — GlassFish automatically reads it on
+    application deployment and creates the listed resources if they
+    don't already exist.
+
+    Alternatively, register resources via the GlassFish Admin Console
+    (http://localhost:4848) or the asadmin CLI (see DEPLOYMENT.md).
+
+    Resources defined here:
+      1. JDBC Connection Pool    → TechMartPool
+      2. JDBC DataSource         → jdbc/TechMartDS
+      3. JMS Connection Factory  → jms/ConnectionFactory
+      4. JMS Queue               → jms/OrderQueue
+      5. JMS Topic               → jms/InventoryTopic
+-->
+<resources>
+
+    <!-- ================================================================
+         1. JDBC Connection Pool
+         Uses MySQL Connector/J DataSource class.
+         Pool is pre-filled and validates connections before use.
+    ================================================================ -->
+    <jdbc-connection-pool
+        name="TechMartPool"
+        datasource-classname="com.mysql.cj.jdbc.MysqlDataSource"
+        res-type="javax.sql.DataSource"
+        steady-pool-size="5"
+        max-pool-size="30"
+        pool-resize-quantity="5"
+        idle-timeout-in-seconds="300"
+        max-wait-time-in-millis="5000"
+        is-connection-validation-required="true"
+        connection-validation-method="auto-commit"
+        fail-all-connections="false"
+        statement-cache-size="32">
+
+        <property name="serverName"              value="localhost"/>
+        <property name="portNumber"              value="3306"/>
+        <property name="databaseName"            value="techmart_modernization_db"/>
+        <property name="user"                    value="root"/>
+        <property name="password"                value="Vimandya@20030908"/>
+        <property name="useSSL"                  value="false"/>
+        <property name="serverTimezone"          value="UTC"/>
+        <property name="allowPublicKeyRetrieval" value="true"/>
+        <property name="useUnicode"              value="true"/>
+        <property name="characterEncoding"       value="UTF-8"/>
+        <property name="cachePrepStmts"          value="true"/>
+        <property name="prepStmtCacheSize"       value="250"/>
+    </jdbc-connection-pool>
+
+    <!-- ================================================================
+         2. JDBC DataSource — bound to JNDI jdbc/TechMartDS
+         Referenced by DataSourceProvider via @Resource(lookup="jdbc/TechMartDS")
+    ================================================================ -->
+    <jdbc-resource
+        pool-name="TechMartPool"
+        jndi-name="jdbc/TechMartDS"
+        enabled="true"/>
+
+    <!-- ================================================================
+         3. JMS Connection Factory
+         GlassFish ships with Open MQ as its built-in JMS broker.
+         The default ConnectionFactory is registered at this JNDI name.
+
+         NOTE: A ConnectionFactory is NOT an admin-object — admin-object-resource
+         is only valid for destinations (Queue/Topic). A connection factory must
+         be declared as a connector-connection-pool + connector-resource pair
+         (connectiondefinition-name = jakarta.jms.ConnectionFactory). Using
+         admin-object-resource for it is what produces:
+           "Invalid Resource Type: jakarta.jms.ConnectionFactory"
+    ================================================================ -->
+    <connector-connection-pool
+        name="jms/TechMartConnectionFactoryPool"
+        connection-definition-name="jakarta.jms.ConnectionFactory"
+        resource-adapter-name="jmsra">
+        <property name="AddressList" value="localhost:7676"/>
+    </connector-connection-pool>
+
+    <connector-resource
+        pool-name="jms/TechMartConnectionFactoryPool"
+        jndi-name="jms/ConnectionFactory"
+        enabled="true"/>
+
+    <!-- ================================================================
+         4. JMS Queue — OrderQueue (Point-to-Point)
+         Used by OrderMessageProducer → OrderProcessorMDB
+    ================================================================ -->
+    <admin-object-resource
+        res-adapter="jmsra"
+        res-type="jakarta.jms.Queue"
+        jndi-name="jms/OrderQueue"
+        object-type="user">
+        <property name="imqDestinationName" value="OrderQueue"/>
+    </admin-object-resource>
+
+    <!-- ================================================================
+         5. JMS Topic — InventoryTopic (Publish-Subscribe)
+         Used by InventoryEventProducer → InventoryUpdateMDB
+    ================================================================ -->
+    <admin-object-resource
+        res-adapter="jmsra"
+        res-type="jakarta.jms.Topic"
+        jndi-name="jms/InventoryTopic"
+        object-type="user">
+        <property name="imqDestinationName" value="InventoryTopic"/>
+    </admin-object-resource>
+
+</resources>
