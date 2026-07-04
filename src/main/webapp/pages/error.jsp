@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" isErrorPage="true" %>
-<%@ page import="jakarta.servlet.error.RequestDispatcher" %>
+<%@ page import="jakarta.servlet.RequestDispatcher" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
