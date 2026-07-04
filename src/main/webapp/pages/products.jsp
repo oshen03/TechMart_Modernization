@@ -52,8 +52,11 @@
                             <div class="product-meta">
                                 <span class="price">$<fmt:formatNumber value="${p.price}" pattern="#,##0.00"/></span>
                                 <span class="stock ${p.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'}">
-                                    ${p.stockQuantity > 0 ? p.stockQuantity.concat(' in stock') : 'Out of stock'}
-                                </span>
+    <c:choose>
+        <c:when test="${p.stockQuantity > 0}">${p.stockQuantity} in stock</c:when>
+        <c:otherwise>Out of stock</c:otherwise>
+    </c:choose>
+</span>
                             </div>
                         </div>
                         <div class="product-actions">
