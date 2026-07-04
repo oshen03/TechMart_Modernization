@@ -176,8 +176,8 @@
                 </executions>
                 <configuration>
                     <glassfishDirectory>${glassfish.home}</glassfishDirectory>
-                    <user>Oshen</user>
-                    <adminPassword>Oshen2003</adminPassword>
+                    <user>admin</user>
+                    <adminPassword></adminPassword>
                     <domain>
                         <name>domain1</name>
                         <httpPort>8080</httpPort>
