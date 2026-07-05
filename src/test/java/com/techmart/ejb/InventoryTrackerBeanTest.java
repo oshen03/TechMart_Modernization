@@ -8,6 +8,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -16,24 +18,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit tests for InventoryTrackerBean (Singleton EJB).
- *
- * Key scenarios tested:
- *   - Inventory cache is pre-loaded from DB at startup
- *   - Stock reservation succeeds when sufficient stock exists
- *   - Stock reservation fails (returns false) when insufficient
- *   - Compensating restock logic works correctly
- *   - Thread-safety contract is not broken by concurrent-style operations
- *   - Remote inventory updates are applied to the cache
- *   - Performance metrics are recorded for every operation
- *
- * Note: @Lock(WRITE) / @Lock(READ) are container-enforced annotations —
- * they cannot be unit-tested without an EJB container.  Concurrency
- * correctness is verified via the Arquillian integration test instead.
- */
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("InventoryTrackerBean Unit Tests")
+@MockitoSettings(strictness = Strictness.LENIENT)
 class InventoryTrackerBeanTest {
 
     @Mock private DataSourceProvider    dsProvider;

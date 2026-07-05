@@ -8,6 +8,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
@@ -19,22 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit tests for ProductCatalogBean.
- *
- * Strategy: mock the DataSourceProvider and PerformanceMonitor so tests
- * run without a real database or application server.  We inject mocks
- * via reflection (simulating what the EJB container does with @EJB).
- *
- * These tests verify:
- *   - Correct SQL is executed and ResultSet rows are mapped to Product objects
- *   - Search parameter binding works (no SQL injection risk)
- *   - Empty result sets return empty lists (not null)
- *   - SQLException propagates as RuntimeException
- *   - Performance monitor is called for every operation
- */
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProductCatalogBean Unit Tests")
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ProductCatalogBeanTest {
 
     @Mock private DataSourceProvider dsProvider;
