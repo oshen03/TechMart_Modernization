@@ -5,6 +5,7 @@ import com.techmart.model.OrderItem;
 import com.techmart.jms.producer.OrderMessageProducer;
 import com.techmart.util.DataSourceProvider;
 import com.techmart.util.PerformanceMonitor;
+import com.techmart.ejb.singleton.EmailCircuitBreakerBean;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -52,6 +53,9 @@ public class OrderServiceBean {
 
     @EJB
     private OrderMessageProducer messageProducer;
+
+    @EJB
+    private EmailCircuitBreakerBean circuitBreaker;
 
     @PostConstruct
     public void init() {
@@ -125,22 +129,44 @@ public class OrderServiceBean {
     @Asynchronous
     public Future<String> sendConfirmationEmailAsync(Order order) {
         long start = System.currentTimeMillis();
+
+        // Circuit Breaker Check: Abort if the circuit is OPEN
+        if (!circuitBreaker.allowRequest()) {
+            LOG.warning("Circuit breaker is OPEN. Email dispatch aborted for Order #" + order.getId());
+            return new jakarta.ejb.AsyncResult<>("Email queued (Circuit Open)");
+        }
+
         try {
-            // Simulate SMTP latency (in production: inject a MailSession via @Resource)
+            // Simulate SMTP latency
             Thread.sleep(150);
 
             String message = "Confirmation email sent to " + order.getCustomerEmail() +
-                             " for order #" + order.getId();
+                    " for order #" + order.getId();
             LOG.info(message);
+
+            // Success: Tell the circuit breaker the service is working
+            circuitBreaker.recordSuccess();
+
             return new jakarta.ejb.AsyncResult<>(message);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOG.warning("Email dispatch interrupted for order " + order.getId());
+
+            // Failure: Tell the circuit breaker a failure occurred
+            circuitBreaker.recordFailure();
+
             return new jakarta.ejb.AsyncResult<>("Email interrupted");
+        } catch (Exception e) {
+            LOG.log(Level.WARNING, "Email dispatch failed", e);
+
+            // Failure: Tell the circuit breaker a failure occurred
+            circuitBreaker.recordFailure();
+
+            return new jakarta.ejb.AsyncResult<>("Email failed");
         } finally {
             perfMonitor.record(COMPONENT, "sendConfirmationEmailAsync",
-                               System.currentTimeMillis() - start);
+                    System.currentTimeMillis() - start);
         }
     }
 
