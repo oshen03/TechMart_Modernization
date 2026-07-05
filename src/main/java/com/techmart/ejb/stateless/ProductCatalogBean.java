@@ -18,23 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Stateless Session Bean — Product Catalogue Service.
- *
- * WHY STATELESS?
- * Product search carries no per-user conversational state between calls.
- * The container maintains a pool of these beans and assigns any available
- * instance to each incoming request, enabling high concurrency with minimal
- * memory overhead.  At 10,000 concurrent users, pooling stateless beans is
- * far more efficient than creating one instance per user.
- *
- * LIFECYCLE:
- *   Does Not Exist → @PostConstruct (init) → Ready (pooled) → @PreDestroy → Does Not Exist
- *
- * The container may passivate (destroy) pool instances under low load and
- * create new ones under high load, so no mutable per-call state should ever
- * be stored in instance fields.
- */
+
 @Stateless
 public class ProductCatalogBean {
 

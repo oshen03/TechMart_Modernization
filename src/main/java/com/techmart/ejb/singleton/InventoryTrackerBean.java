@@ -13,36 +13,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Singleton Session Bean — Real-Time Inventory Tracker.
- *
- * WHY SINGLETON?
- * Inventory counts must be consistent across ALL concurrent requests.
- * If product SKU-1001 has 5 units and two users simultaneously try to
- * buy 3 each, a stateless pool would let both succeed (overselling).
- * A singleton guarantees one authoritative inventory state per JVM.
- *
- * LIFECYCLE:
- *   Does Not Exist
- *     → @PostConstruct (loads inventory from DB into in-memory cache)
- *     → Ready (single instance, container-managed concurrency)
- *     → @PreDestroy (flushes dirty counts to DB on shutdown)
- *
- * CONCURRENCY STRATEGY:
- *   Using @ConcurrencyManagement(CONTAINER) with @Lock annotations:
- *   - @Lock(READ)  → multiple threads may read simultaneously
- *   - @Lock(WRITE) → exclusive access for mutations (reserve/restock)
- *
- *   Container-managed concurrency is simpler and safer than BEAN-managed
- *   (which would require manual synchronized blocks or ReentrantReadWriteLock).
- *
- * CLUSTERING NOTE:
- *   This singleton only guarantees consistency within a single JVM.
- *   In a GlassFish cluster, each node has its own singleton instance.
- *   For cross-node consistency, emit inventory change events via JMS
- *   (InventoryEventProducer → InventoryUpdateMDB on every node).
- *   This is implemented below via publishInventoryChange().
- */
+
 @Singleton
 @Startup
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)

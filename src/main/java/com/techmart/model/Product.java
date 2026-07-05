@@ -4,10 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Product entity representing a TechMart catalogue item.
- * Used across all layers — EJBs, JMS messages, and the web tier.
- */
+
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;

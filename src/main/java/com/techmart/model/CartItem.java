@@ -3,10 +3,7 @@ package com.techmart.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * Represents a single item held in a customer's shopping cart.
- * Lightweight version of OrderItem — no DB identity yet.
- */
+
 public class CartItem implements Serializable {
 
     private static final long serialVersionUID = 1L;

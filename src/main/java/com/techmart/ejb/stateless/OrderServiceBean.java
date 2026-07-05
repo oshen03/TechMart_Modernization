@@ -111,21 +111,7 @@ public class OrderServiceBean {
         }
     }
 
-    /**
-     * Asynchronous notification email dispatch.
-     *
-     * @Asynchronous causes the container to execute this method on a
-     * separate thread from its managed thread pool, returning immediately
-     * to the caller with a Future handle.
-     *
-     * RELIABILITY CONSIDERATION: If the container crashes after the order
-     * is committed but before the email thread fires, the email is silently
-     * lost.  For critical notifications, use a JMS-backed outbox pattern
-     * (write to a DB table, MDB picks it up) instead.
-     *
-     * @return Future<String> — callers can call .get(5, SECONDS) to confirm
-     *         delivery or detect timeout; fire-and-forget callers can ignore it.
-     */
+
     @Asynchronous
     public Future<String> sendConfirmationEmailAsync(Order order) {
         long start = System.currentTimeMillis();

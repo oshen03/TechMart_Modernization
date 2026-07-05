@@ -12,27 +12,7 @@ import jakarta.jms.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Message-Driven Bean — Inventory Update Consumer (Pub/Sub).
- *
- * Subscribes to the InventoryTopic and applies remote stock updates
- * to the local InventoryTrackerBean singleton cache.  This enables
- * cross-node inventory synchronisation in a GlassFish cluster.
- *
- * DURABLE SUBSCRIPTION:
- *   subscriptionDurability = "Durable" + clientId/subscriptionName means
- *   the broker retains missed messages while this node is offline.
- *   When the node restarts, it receives all buffered updates in order,
- *   bringing its cache back to the correct state.
- *
- *   Each cluster node must have a unique clientId to receive its own
- *   copy of every message (pub/sub semantics).
- *
- * MESSAGE SELECTOR:
- *   This MDB listens to all event types (no selector set).
- *   To filter only RESTOCK events: set messageSelector="eventType = 'RESTOCK'"
- *   in activationConfig — the broker filters at source, saving bandwidth.
- */
+
 @MessageDriven(
     activationConfig = {
         @ActivationConfigProperty(

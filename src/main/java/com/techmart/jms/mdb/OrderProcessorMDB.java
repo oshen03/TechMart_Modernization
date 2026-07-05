@@ -15,47 +15,7 @@ import jakarta.jms.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Message-Driven Bean — Order Processor.
- *
- * Consumes messages from jms/OrderQueue and fulfils orders
- * by performing inventory reservation and status updates.
- *
- * MDB LIFECYCLE:
- *   Does Not Exist
- *     → Container creates instance pool on application deploy
- *     → @PostConstruct called on each pooled instance
- *     → onMessage() invoked per message (container-managed concurrency)
- *     → @PreDestroy on undeploy / shutdown
- *
- * MDB PROPERTIES (ActivationConfigProperty):
- *   destinationType: jakarta.jms.Queue (not Topic — point-to-point)
- *   destinationLookup     → JNDI name of the OrderQueue (GlassFish uses
- *                           destinationLookup instead of destination)
- *   acknowledgeMode       → Auto-acknowledge: broker removes the message
- *                           from the queue only after onMessage() returns
- *                           without throwing a RuntimeException.
- *                           If onMessage() throws, the message is redelivered
- *                           (up to maxRedeliveries, then → Dead Message Queue (GlassFish Open MQ DMS)).
- *   endpointExceptionRedeliveryAttempts → GlassFish/Open MQ equivalent of
- *                           GlassFish Open MQ's maxDeliveryAttempts (default 6).
- *   maxSession            → 10 concurrent consumer threads.
- *                           Tune this based on DB connection pool size.
- *                           Too high → connection pool exhaustion.
- *                           Too low  → messages queue up under burst load.
- *
- * MDB LIMITATIONS:
- *   1. No direct return value — responses must go via another queue/topic.
- *   2. Stateless by nature — no conversational state between messages.
- *   3. Transaction boundary is per-message, not per-batch.
- *   4. Pool size is fixed; dynamic scaling requires EJB container support
- *      (GlassFish supports this via the Admin Console MDB pool settings).
- *
- * MITIGATION FOR THROUGHPUT BOTTLENECK:
- *   Increase maxSession AND the GlassFish connection pool max-pool-size
- *   in proportion. Use GlassFish Open MQ consumer flow control to prevent message
- *   pile-up on a single MDB thread when others are idle.
- */
+
 @MessageDriven(
     activationConfig = {
         @ActivationConfigProperty(

@@ -19,30 +19,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Servlet — Shopping Cart and Order Placement.
- *
- * Cart lifecycle:
- *   1. Customer adds item → UserCartSessionBean created and bound to HTTP session
- *   2. Customer views cart → reads bean state from session
- *   3. Customer checks out → OrderServiceBean.placeOrder() called,
- *      async email fires, cart bean @Remove'd, session attribute cleared
- *
- * The UserCartSessionBean is stored in the HTTP session (not injected with @EJB)
- * because @EJB-injected stateful beans are shared across all requests to
- * this servlet instance.  Each user needs their own UserCartSessionBean reference,
- * so we store it in HttpSession and look it up per request.
- *
- * In a full CDI application, @SessionScoped + @Inject would handle this
- * more elegantly, but the pure EJB approach is shown here per the assignment.
- *
- * URL mappings:
- *   GET  /cart             → view current cart
- *   POST /cart?action=add  → add item to cart
- *   POST /cart?action=remove → remove item
- *   POST /cart?action=checkout → place order
- *   GET  /orders           → view order history
- */
+
 @WebServlet(name = "OrderServlet", urlPatterns = {"/cart", "/orders"})
 public class OrderServlet extends HttpServlet {
 
@@ -217,10 +194,7 @@ public class OrderServlet extends HttpServlet {
     // Helpers
     // ------------------------------------------------------------------
 
-    /**
-     * Returns the cart bean from the session, creating a new one if absent.
-     * In a CDI app this would be @SessionScoped + @Inject.
-     */
+
     private UserCartSessionBean getOrCreateCart(HttpSession session) {
         UserCartSessionBean cart = (UserCartSessionBean) session.getAttribute(CART_SESSION_KEY);
         if (cart == null) {

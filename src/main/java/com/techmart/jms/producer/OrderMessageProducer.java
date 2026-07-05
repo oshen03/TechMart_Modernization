@@ -11,52 +11,18 @@ import jakarta.jms.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * JMS Producer — Order Queue (Point-to-Point).
- *
- * PATTERN: Point-to-Point (Queue)
- *   Each order message is consumed by exactly one OrderProcessorMDB instance.
- *   This is correct for order fulfilment — we do not want two MDB instances
- *   processing the same order simultaneously.
- *
- * JMS PARTICIPANTS:
- *   Producer  → this bean (OrderMessageProducer)
- *   Broker    → GlassFish's embedded Open MQ broker
- *   Consumer  → OrderProcessorMDB (listens on jms/OrderQueue)
- *   Message   → ObjectMessage carrying a serialised Order object
- *
- * WHY NOT TextMessage + JSON?
- *   ObjectMessage is simpler for internal EJB-to-MDB communication.
- *   For external integrations (REST APIs, cross-platform), TextMessage + JSON
- *   is preferred for interoperability.
- *
- * DELIVERY GUARANTEE:
- *   DeliveryMode.PERSISTENT ensures the broker writes the message to its
- *   journal before acknowledging send().  If the server crashes before the
- *   MDB consumes it, the message survives and is delivered on restart.
- *
- * DEAD LETTER HANDLING:
- *   GlassFish Open MQ sends undeliverable messages to DLQ/ExpiryQueue
- *   after maxDeliveryAttempts (default 10). Configure a separate MDB or
- *   monitoring job to inspect these.
- */
+
 @Stateless
 public class OrderMessageProducer {
 
     private static final Logger LOG = Logger.getLogger(OrderMessageProducer.class.getName());
     private static final String COMPONENT = "OrderMessageProducer";
 
-    /**
-     * JMS ConnectionFactory injected via @Resource (JNDI).
-     * GlassFish provides jms/ConnectionFactory out of the box.
-     */
+
     @Resource(lookup = "jms/ConnectionFactory")
     private ConnectionFactory connectionFactory;
 
-    /**
-     * Order queue injected via @Resource.
-     * Defined in glassfish-resources.xml or via asadmin.
-     */
+
     @Resource(lookup = "jms/OrderQueue")
     private Queue orderQueue;
 
@@ -68,15 +34,7 @@ public class OrderMessageProducer {
         LOG.info("OrderMessageProducer ready — targeting queue: jms/OrderQueue");
     }
 
-    /**
-     * Sends an Order onto the OrderQueue for asynchronous processing.
-     *
-     * Calling JMS 2.0 try-with-resources API automatically closes the
-     * JMSContext (and its underlying Connection + Session) on scope exit,
-     * returning resources to the connection pool cleanly.
-     *
-     * @param order  the Order to enqueue; must be Serializable
-     */
+
     public void sendOrderForProcessing(Order order) {
         long start = System.currentTimeMillis();
 

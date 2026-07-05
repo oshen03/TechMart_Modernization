@@ -6,10 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Order entity representing a customer purchase.
- * Serializable so it can be placed onto the JMS OrderQueue as an ObjectMessage.
- */
+
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;

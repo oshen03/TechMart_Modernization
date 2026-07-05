@@ -12,16 +12,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Servlet — Performance Metrics Dashboard.
- *
- * Exposes the PerformanceMonitor singleton data as both:
- *   GET /metrics       → HTML dashboard
- *   GET /metrics?json  → JSON payload for programmatic consumption
- *
- * This satisfies the assignment requirement for "Web interface with
- * performance metrics display" and supports runtime benchmarking.
- */
+
 @WebServlet(name = "MetricsDashboardServlet", urlPatterns = "/metrics")
 public class MetricsDashboardServlet extends HttpServlet {
 

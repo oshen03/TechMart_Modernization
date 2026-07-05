@@ -3,9 +3,7 @@ package com.techmart.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * A single line item within an Order.
- */
+
 public class OrderItem implements Serializable {
 
     private static final long serialVersionUID = 1L;

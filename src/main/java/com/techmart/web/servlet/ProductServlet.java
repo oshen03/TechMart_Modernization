@@ -11,19 +11,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Servlet — Product Catalogue Browser.
- *
- * Demonstrates @EJB injection into a servlet: the container injects
- * the ProductCatalogBean reference before the first request arrives,
- * equivalent to a JNDI lookup but without the boilerplate.
- *
- * URL mappings:
- *   GET  /products           → list all products
- *   GET  /products?q=laptop  → search by keyword
- *   GET  /products?cat=electronics  → filter by category
- *   GET  /products?id=42     → show single product
- */
 @WebServlet(name = "ProductServlet", urlPatterns = "/products")
 public class ProductServlet extends HttpServlet {
 

@@ -10,32 +10,7 @@ import jakarta.jms.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * JMS Producer — Inventory Topic (Publish-Subscribe).
- *
- * PATTERN: Publish-Subscribe (Topic)
- *   An inventory change event is broadcast to ALL subscribers simultaneously.
- *   This is correct for warehouse synchronisation — every warehouse node
- *   must receive every stock change regardless of how many nodes exist.
- *
- * JMS PARTICIPANTS:
- *   Publisher   → this bean (InventoryEventProducer)
- *   Broker      → GlassFish embedded Open MQ broker
- *   Subscribers → InventoryUpdateMDB instances on every cluster node,
- *                 plus any external warehouse management systems
- *   Message     → MapMessage with productId, newLevel, eventType fields
- *
- * WHY MapMessage HERE (vs ObjectMessage for orders)?
- *   Inventory events are simple key-value payloads. MapMessage avoids
- *   serialisation overhead of ObjectMessage and is more interoperable
- *   with non-Java subscribers (e.g., a Python warehouse dashboard).
- *
- * DURABLE SUBSCRIPTIONS:
- *   If a warehouse node is temporarily offline, it could miss events.
- *   Durable subscriptions (createDurableConsumer) ensure the broker
- *   retains messages until each named subscriber acknowledges receipt.
- *   The InventoryUpdateMDB uses activationConfig to request durable subscription.
- */
+
 @Stateless
 public class InventoryEventProducer {
 

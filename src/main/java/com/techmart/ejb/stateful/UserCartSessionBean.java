@@ -12,35 +12,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Stateful Session Bean — Shopping Cart.
- *
- * WHY STATEFUL?
- * A shopping cart must remember each customer's selections across multiple
- * HTTP requests (browsing, adding items, reviewing) within the same session.
- * A stateless bean is re-pooled between calls and cannot hold this state.
- * A stateful bean is bound to a single client for the duration of the session.
- *
- * LIFECYCLE:
- *   Does Not Exist
- *     → @PostConstruct (cart initialised)
- *     → Ready (client calls methods)
- *     → [Passivated] (container swaps to disk under memory pressure)
- *     → @PrePassivate called before passivation
- *     → @PostActivate called after restoration
- *     → @Remove — client calls checkout() or clearCart(), bean destroyed
- *     → @PreDestroy
- *
- * PERFORMANCE CONSIDERATION:
- * Each active stateful bean occupies heap memory. At 10,000 concurrent users
- * this is significant. Mitigations:
- *   - Set statefulTimeout to expire idle carts (e.g., 30 min)
- *   - Keep cart data lightweight (IDs + quantities, fetch details on demand)
- *   - Use distributed session replication (Shoal/Hazelcast in GlassFish) for HA
- *
- * @StatefulTimeout ensures the container removes idle beans automatically,
- * freeing memory without requiring explicit client cleanup.
- */
+
 @Stateful
 @StatefulTimeout(value = 30, unit = java.util.concurrent.TimeUnit.MINUTES)
 public class UserCartSessionBean {

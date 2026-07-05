@@ -16,17 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-/**
- * Application-scoped performance monitor.
- *
- * Collects timing samples from EJBs and JMS components and exposes
- * aggregated statistics to the metrics dashboard.
- *
- * Using @Singleton with @Startup so the monitor is always ready before
- * any other component tries to record a metric.  Read operations use
- * LockType.READ to allow concurrent reads; writes use LockType.WRITE
- * only where ConcurrentHashMap is insufficient.
- */
+
 @Singleton
 @Startup
 public class PerformanceMonitor {

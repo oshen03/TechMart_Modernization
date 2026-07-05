@@ -3,10 +3,7 @@ package com.techmart.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Captures a single performance observation for display
- * in the metrics dashboard servlet.
- */
+
 public class PerformanceMetric implements Serializable {
 
     private static final long serialVersionUID = 1L;
